@@ -2,6 +2,7 @@ import tkinter
 window = tkinter.Tk()
 window.title("Resturant Manager")
 window.config(bg="blue")
+
 i=0
 def do():
     global i
