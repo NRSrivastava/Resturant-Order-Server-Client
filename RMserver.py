@@ -1,7 +1,7 @@
 import tkinter
 window = tkinter.Tk()
 window.title("Resturant Manager")
-window.config(bg="blue")
+window.config(bg="#0000FF")
 
 i=0
 def do():
