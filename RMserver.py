@@ -116,6 +116,6 @@ tk.Label(billdesk,text="1",bg="red").pack(fill=tk.BOTH,expand=True)
 tk.Button(reserved,text="Pull",bg="green",command=remove).pack(fill=tk.BOTH,expand=True)
 tk.Button(empty,text="Push",bg="yellow",command=add).pack(fill=tk.BOTH,expand=True)
 
-#root configuration
+#root
 window.config(menu=menubar)
 window.mainloop()
