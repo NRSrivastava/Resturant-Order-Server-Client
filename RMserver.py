@@ -8,10 +8,6 @@ from functools import partial
 
 menu=[["Fries Meal",50],["Lunch",250],["Burger Meal",100],["Pizza",200],["Cheese Burger",150],["Drinks",50]]
 tax=[["CGST",9],["SGST",9]]
-bdlist=[]
-culist=[]
-relist=[]
-emlist=[]
 
 
 
