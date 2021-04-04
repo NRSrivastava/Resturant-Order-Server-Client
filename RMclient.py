@@ -1,16 +1,51 @@
+import sys
+import subprocess
+import pkg_resources
+
+
+required = {"ssdpy","cryptography"}
+installed = {pkg.key for pkg in pkg_resources.working_set}
+missing = required - installed
+
+if missing:
+    print("=================================================================================\nDownloading Dependencies\n=================================================================================")
+    python = sys.executable
+    try:
+        subprocess.check_call([python, '-m', 'pip', 'install', *missing])
+        print("=================================================================================\nDependencies installed\n=================================================================================")
+    except:
+        print("=================================================================================\nDependencies could not be installed.\nCheck your system is connected to Internet and pip is installed on your system.\n=================================================================================")
+        input("Press Enter to continue...")
+        sys.exit()
+
 from socket import *
 from tkinter import *
+from tkinter import messagebox
 import pickle
 from functools import partial
 import datetime
+from ssdpy import SSDPClient
 
+hostip=None
 
+def getServer():
+    global hostip
+    client=SSDPClient()
+    devices=client.m_search("RestaurantManagement&BillingDesk_IamServer")
+    if(len(devices)<=0):
+        messagebox.showerror("Server Error","No server Found")
+        print("exit!!!")
+        exit()
+    for dev in devices:
+        hostip=dev['location']
+    print(hostip)
 
 
 
 def askmenu():
+    global hostip
     s= socket(AF_INET,SOCK_STREAM)
-    s.connect((gethostname(),25258))
+    s.connect((hostip,25258))
     s.send(bytes("menu","utf-8"))
     msg=s.recv(10).decode("utf-8")
     s.send(bytes("ok","utf-8"))
@@ -21,16 +56,18 @@ def askmenu():
     return pickle.loads(msg1),pickle.loads(msg2)
 
 def sendOr(order):
+    global hostip
     s= socket(AF_INET,SOCK_STREAM)
-    s.connect((gethostname(),25258))
+    s.connect((hostip,25258))
     s.send(bytes("order","utf-8"))
     s.recv(10)
     s.send(pickle.dumps(order))
     s.close()
 
 def sendBill(billlist):
+    global hostip
     s= socket(AF_INET,SOCK_STREAM)
-    s.connect((gethostname(),25258))
+    s.connect((hostip,25258))
     s.send(bytes("bill","utf-8"))
     s.recv(10)
     s.send(pickle.dumps(billlist))
@@ -38,6 +75,7 @@ def sendBill(billlist):
 
 menu=None
 tax=None
+getServer()
 menu,tax=askmenu()
 tableNumber=""
 #print(tax)

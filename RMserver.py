@@ -1,18 +1,41 @@
+import sys
+import subprocess
+import pkg_resources
+
+
+required = {"ssdpy","cryptography"}
+installed = {pkg.key for pkg in pkg_resources.working_set}
+missing = required - installed
+
+if missing:
+    print("=================================================================================\nDownloading Dependencies\n=================================================================================")
+    python = sys.executable
+    try:
+        subprocess.check_call([python, '-m', 'pip', 'install', *missing])
+        print("=================================================================================\nDependencies installed\n=================================================================================")
+    except:
+        print("=================================================================================\nDependencies could not be installed.\nCheck your system is connected to Internet and pip is installed on your system.\n=================================================================================")
+        input("Press Enter to continue...")
+        sys.exit()
+
 import threading
 from socket import *
 import tkinter as tk
 import datetime
 import pickle
-import sys
 from functools import partial
+from ssdpy import SSDPServer
+from ssdpy import SSDPClient
+from cryptography.fernet import Fernet
+
+
 
 menu=[["Fries Meal",50],["Lunch",250],["Burger Meal",100],["Pizza",200],["Cheese Burger",150],["Drinks",50]]
 tax=[["CGST",9],["SGST",9]]
 
-
-
 def main():
     global menu,tax,window,billdesk,current,reserved,empty
+
     s=socket(AF_INET,SOCK_STREAM)
     s.bind((gethostname(),25258))
     s.listen(5)
@@ -102,7 +125,11 @@ def main():
 
         #break
 
-
+def ssdp_server():
+    #fer=Fernet("gXCnPcICN8HIqML1zx6tjgiWfZ8Woiyfs-o9_T6s1Ps=")
+    #fer.encrypt(gethostbyname(hostname).encode())
+    server = SSDPServer("Server 1",device_type="RestaurantManagement&BillingDesk_IamServer",location=gethostbyname(gethostname()))
+    server.serve_forever()
 
 
 #window=billdesk=current=reserved=empty=None
@@ -247,6 +274,9 @@ t2=threading.Thread(target=main)
 t2.setDaemon(True)
 t2.start()
 
+t3=threading.Thread(target=ssdp_server)
+t3.setDaemon(True)
+t3.start()
 
 
 window.mainloop()
