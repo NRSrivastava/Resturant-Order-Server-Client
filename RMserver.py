@@ -2,8 +2,7 @@ import sys
 import subprocess
 import pkg_resources
 
-
-required = {"ssdpy","cryptography"}
+required = {"ssdpy","cryptography","pyyaml"}
 installed = {pkg.key for pkg in pkg_resources.working_set}
 missing = required - installed
 
@@ -27,14 +26,18 @@ from functools import partial
 from ssdpy import SSDPServer
 from ssdpy import SSDPClient
 from cryptography.fernet import Fernet
+import yaml
+import json
 
 
-
-menu=[["Fries Meal",50],["Lunch",250],["Burger Meal",100],["Pizza",200],["Cheese Burger",150],["Drinks",50]]
-tax=[["CGST",9],["SGST",9]]
+dataStore=yaml.safe_load(open("RServConfig.yaml","r+"))
+menu=dataStore["menu"]
+tax=dataStore["tax"]
 
 def main():
     global menu,tax,window,billdesk,current,reserved,empty
+
+    
 
     s=socket(AF_INET,SOCK_STREAM)
     s.bind((gethostname(),25258))
